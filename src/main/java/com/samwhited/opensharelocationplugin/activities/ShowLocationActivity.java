@@ -116,7 +116,7 @@ public class ShowLocationActivity extends LocationActivity implements LocationLi
 
 		if (intent != null) {
 			switch (intent.getAction()) {
-				case "eu.siacs.conversations.location.request":
+				case "eu.siacs.conversations.location.show":
 					if (intent.hasExtra("longitude") && intent.hasExtra("latitude")) {
 						final double longitude = intent.getDoubleExtra("longitude", 0);
 						final double latitude = intent.getDoubleExtra("latitude", 0);
@@ -176,7 +176,7 @@ public class ShowLocationActivity extends LocationActivity implements LocationLi
 					}
 					break;
 			}
-			if (this.mapController != null && this.loc != null) {
+			if (this.mapController != null && this.loc != Config.INITIAL_POS) {
 				if (zoom) {
 					mapController.setZoom(Config.FINAL_ZOOM_LEVEL);
 				}
