@@ -20,6 +20,7 @@ public abstract class LocationActivity extends Activity implements LocationListe
 		}
 
 	protected abstract void gotoLoc() throws UnsupportedOperationException;
+	protected abstract void gotoLoc(final boolean setZoomLevel, final boolean animate) throws UnsupportedOperationException;
 	protected abstract void setLoc(final Location location);
 
 	protected void requestLocationUpdates() {

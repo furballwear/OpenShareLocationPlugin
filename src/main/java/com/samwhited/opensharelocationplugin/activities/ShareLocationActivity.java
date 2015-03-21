@@ -7,6 +7,7 @@ import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +32,32 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 	private Button shareButton;
 	private RelativeLayout snackBar;
 	private MapView map;
+
+	private static final String KEY_LOCATION = "loc";
+	private static final String KEY_ZOOM_LEVEL = "zoom";
+
+	@Override
+	protected void onSaveInstanceState(@NonNull final Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putParcelable(KEY_LOCATION, this.loc);
+		outState.putInt(KEY_ZOOM_LEVEL, map.getZoomLevel());
+	}
+
+	@Override
+	protected void onRestoreInstanceState(@NonNull final Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		if (savedInstanceState.containsKey(KEY_LOCATION)) {
+			this.loc = savedInstanceState.getParcelable(KEY_LOCATION);
+			if (savedInstanceState.containsKey(KEY_ZOOM_LEVEL)) {
+				mapController.setZoom(savedInstanceState.getInt(KEY_ZOOM_LEVEL));
+				gotoLoc(false, false);
+			} else {
+				gotoLoc(true, false);
+			}
+		}
+	}
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -89,13 +116,22 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 	}
 
 	@Override
-	protected void gotoLoc() {
+	protected void gotoLoc(final boolean setZoomLevel, final boolean animate) {
 		if (this.loc != null && mapController != null) {
-			if (map.getZoomLevel() == Config.INITIAL_ZOOM_LEVEL) {
+			if (setZoomLevel) {
 				mapController.setZoom(Config.FINAL_ZOOM_LEVEL);
 			}
-			mapController.animateTo(new GeoPoint(this.loc));
+			if (animate) {
+				mapController.animateTo(new GeoPoint(this.loc));
+			} else {
+				mapController.setCenter(new GeoPoint(this.loc));
+			}
 		}
+	}
+
+	@Override
+	protected void gotoLoc() {
+		this.gotoLoc(map.getZoomLevel() == Config.INITIAL_ZOOM_LEVEL, true);
 	}
 
 	@Override
@@ -132,7 +168,17 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 	protected void onResume() {
 		super.onResume();
 		setSnackbarVisibility();
-		setShareButtonEnabled(false);
+		if (this.loc == null) {
+			setShareButtonEnabled(false);
+		} else {
+			updateLocationMarker();
+			setShareButtonEnabled(true);
+		}
+	}
+
+	private void updateLocationMarker() {
+		this.map.getOverlays().clear();
+		this.map.getOverlays().add(new MyLocation(this, this.loc));
 	}
 
 	@Override
@@ -143,8 +189,7 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 			this.loc = location;
 			gotoLoc();
 
-			this.map.getOverlays().clear();
-			this.map.getOverlays().add(new MyLocation(this, this.loc));
+			updateLocationMarker();
 		}
 	}
 
