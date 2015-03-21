@@ -120,19 +120,24 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 		}
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
+	private void setSnackbarVisibility() {
 		if (isLocationEnabled()) {
 			this.snackBar.setVisibility(View.GONE);
 		} else {
 			this.snackBar.setVisibility(View.VISIBLE);
 		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setSnackbarVisibility();
 		setShareButtonEnabled(false);
 	}
 
 	@Override
 	public void onLocationChanged(final Location location) {
+		setSnackbarVisibility();
 		if (LocationHelper.isBetterLocation(location, this.loc)) {
 			setShareButtonEnabled(true);
 			this.loc = location;
