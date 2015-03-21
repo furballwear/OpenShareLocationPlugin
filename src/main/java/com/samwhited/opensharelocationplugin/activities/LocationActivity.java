@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.samwhited.opensharelocationplugin.util.Config;
+import com.samwhited.opensharelocationplugin.util.LocationHelper;
 
 public abstract class LocationActivity extends Activity implements LocationListener {
 	private LocationManager locationManager;
@@ -22,20 +23,27 @@ public abstract class LocationActivity extends Activity implements LocationListe
 	protected abstract void setLoc(final Location location);
 
 	protected void requestLocationUpdates() {
+		final Location lastKnownLocationGps;
+		final Location lastKnownLocationNetwork;
+
 		if (locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER)) {
-			final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-			if (lastKnownLocation != null) {
-				setLoc(lastKnownLocation);
-				try {
-					gotoLoc();
-				} catch (final UnsupportedOperationException ignored) {
-				}
+			lastKnownLocationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+			if (lastKnownLocationGps != null) {
+				setLoc(lastKnownLocationGps);
 			}
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Config.LOCATION_FIX_TIME_DELTA,
 					Config.LOCATION_FIX_SPACE_DELTA, this);
+		} else {
+			lastKnownLocationGps = null;
 		}
 
 		if (locationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER)) {
+			lastKnownLocationNetwork = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			if (lastKnownLocationNetwork != null && LocationHelper.isBetterLocation(lastKnownLocationNetwork,
+					lastKnownLocationGps)) {
+				setLoc(lastKnownLocationNetwork);
+			}
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, Config.LOCATION_FIX_TIME_DELTA,
 					Config.LOCATION_FIX_SPACE_DELTA, this);
 		}
@@ -44,6 +52,11 @@ public abstract class LocationActivity extends Activity implements LocationListe
 		// drained. Go ahead and use the existing locations as often as we can get them.
 		if (locationManager.getAllProviders().contains(LocationManager.PASSIVE_PROVIDER)) {
 			locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0, this);
+		}
+
+		try {
+			gotoLoc();
+		} catch (final UnsupportedOperationException ignored) {
 		}
 	}
 
