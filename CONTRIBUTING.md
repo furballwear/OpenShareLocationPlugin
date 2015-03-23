@@ -1,4 +1,4 @@
-## Coding style
+# Coding style
 
  - Use tabs
  - Wrap lines at 120 characters
