@@ -18,7 +18,7 @@ save battery where possible).
 
 ## Requirements
 
- - Conversations 1.2.0.
+ - Conversations ≥1.2.0
 
 [conversations]: https://github.com/siacs/Conversations
 [conversations-loc]: https://github.com/siacs/ShareLocationPlugin
