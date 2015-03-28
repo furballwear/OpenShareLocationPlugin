@@ -14,13 +14,19 @@ public abstract class LocationActivity extends Activity implements LocationListe
 	private LocationManager locationManager;
 
 	@Override
-		protected void onCreate(final Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		}
+	protected void onCreate(final Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		this.locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+	}
 
-	protected abstract void gotoLoc() throws UnsupportedOperationException;
-	protected abstract void gotoLoc(final boolean setZoomLevel, final boolean animate) throws UnsupportedOperationException;
+	protected void gotoLoc() throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
+	protected void gotoLoc(final boolean setZoomLevel, final boolean animate) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
 	protected abstract void setLoc(final Location location);
 
 	protected void requestLocationUpdates() {

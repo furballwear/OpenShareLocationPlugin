@@ -131,7 +131,7 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 
 	@Override
 	protected void gotoLoc() {
-		this.gotoLoc(map.getZoomLevel() == Config.INITIAL_ZOOM_LEVEL, true);
+		gotoLoc(map.getZoomLevel() == Config.INITIAL_ZOOM_LEVEL, true);
 	}
 
 	@Override

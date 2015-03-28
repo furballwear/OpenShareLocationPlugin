@@ -61,15 +61,6 @@ public class ShowLocationActivity extends LocationActivity implements LocationLi
 		requestLocationUpdates();
 	}
 
-	@Override
-	protected void gotoLoc() {
-		throw new UnsupportedOperationException();
-	}
-	@Override
-	protected void gotoLoc(final boolean setZoomLevel, final boolean animate) {
-		throw new UnsupportedOperationException();
-	}
-
 
 	@Override
 	protected void setLoc(final Location location) {
