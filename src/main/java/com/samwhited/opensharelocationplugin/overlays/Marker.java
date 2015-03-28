@@ -20,7 +20,7 @@ public class Marker extends SimpleLocationOverlay {
 	public Marker(final Context ctx, final GeoPoint position) {
 		super(ctx);
 		this.position = position;
-		this.icon = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.ic_place_grey600_48dp);
+		this.icon = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.marker);
 		this.mapCenterPoint = new Point();
 	}
 
