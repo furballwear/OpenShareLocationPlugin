@@ -20,6 +20,12 @@ save battery where possible).
 
  - Conversations ≥1.2.0
 
+
+## Donate
+
+If you'd like to donate to this project, you can send bitcoin to:
+`1PYd7Koqd3ucSxKQRZQZRoB3qi7WaAFvL5`
+
 [conversations]: https://github.com/siacs/Conversations
 [conversations-loc]: https://github.com/siacs/ShareLocationPlugin
 [osmdroid]: https://github.com/osmdroid/osmdroid
