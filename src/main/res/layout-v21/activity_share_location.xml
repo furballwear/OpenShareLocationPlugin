@@ -94,7 +94,7 @@
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="@dimen/fab_button_margin"
         android:layout_marginEnd="@dimen/fab_button_margin"
-        android:src="@drawable/ic_gps_fixed_white_24dp"
+        android:src="@drawable/ic_gps_not_fixed_white_24dp"
         android:contentDescription="@string/action_unfix_from_location"
         android:tint="@android:color/white"
         android:outlineProvider="background"
