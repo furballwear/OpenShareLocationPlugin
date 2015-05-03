@@ -33,9 +33,9 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 	private Location loc;
 	private IMapController mapController;
 	private Button shareButton;
+	private ImageButton gotoLocButton;
 	private RelativeLayout snackBar;
 	private MapView map;
-	private boolean marker_fixed_to_loc = true;
 
 	private static final String KEY_LOCATION = "loc";
 	private static final String KEY_ZOOM_LEVEL = "zoom";
@@ -96,16 +96,9 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 			public void onClick(final View view) {
 				final Intent result = new Intent();
 
-				if (marker_fixed_to_loc && loc != null) {
-					result.putExtra("latitude", loc.getLatitude());
-					result.putExtra("longitude", loc.getLongitude());
-					result.putExtra("altitude", loc.getAltitude());
-					result.putExtra("accuracy", (int) loc.getAccuracy());
-				} else {
-					final IGeoPoint markerPoint = map.getMapCenter();
-					result.putExtra("latitude", markerPoint.getLatitude());
-					result.putExtra("longitude", markerPoint.getLongitude());
-				}
+				final IGeoPoint markerPoint = map.getMapCenter();
+				result.putExtra("latitude", markerPoint.getLatitude());
+				result.putExtra("longitude", markerPoint.getLongitude());
 
 				setResult(RESULT_OK, result);
 				finish();
@@ -113,24 +106,11 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 		});
 
 		// Setup the fab button
-		final ImageButton toggleFixedMarkerButton = (ImageButton) findViewById(R.id.toggle_fixed_marker_button);
-		toggleFixedMarkerButton.setOnClickListener(new View.OnClickListener() {
+		this.gotoLocButton = (ImageButton) findViewById(R.id.goto_location_button);
+		gotoLocButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View view) {
-				final ImageButton fab = (ImageButton) view;
-				marker_fixed_to_loc = !marker_fixed_to_loc;
-
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						fab.setImageResource(marker_fixed_to_loc ? R.drawable.ic_gps_fixed_white_24dp :
-								R.drawable.ic_gps_not_fixed_white_24dp);
-						fab.invalidate();
-					}
-				});
-
 				gotoLoc();
-				updateLocationMarker();
 			}
 		});
 
@@ -145,6 +125,7 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 		});
 
 		requestLocationUpdates();
+		updateLocationMarker();
 	}
 
 	@Override
@@ -196,10 +177,18 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 		}
 	}
 
+	private void setGotoLocButtonVisibility() {
+		if (isLocationEnabled()) {
+			this.gotoLocButton.setVisibility(View.VISIBLE);
+		} else {
+			this.gotoLocButton.setVisibility(View.GONE);
+		}	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		setSnackbarVisibility();
+		setGotoLocButtonVisibility();
 		if (this.loc == null) {
 			setShareButtonEnabled(false);
 		} else {
@@ -212,24 +201,17 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
 		this.map.getOverlays().clear();
 		if (this.loc != null) {
 			this.map.getOverlays().add(new MyLocation(this, this.loc));
-			if (this.marker_fixed_to_loc) {
-				map.getOverlays().add(new Marker(this, new GeoPoint(this.loc)));
-			} else {
-				map.getOverlays().add(new Marker(this));
-			}
 		}
+		map.getOverlays().add(new Marker(this));
 	}
 
 	@Override
 	public void onLocationChanged(final Location location) {
 		setSnackbarVisibility();
+		setGotoLocButtonVisibility();
 		if (LocationHelper.isBetterLocation(location, this.loc)) {
 			setShareButtonEnabled(true);
 			this.loc = location;
-
-			if (this.marker_fixed_to_loc) {
-				gotoLoc();
-			}
 
 			updateLocationMarker();
 		}

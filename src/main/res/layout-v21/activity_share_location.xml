@@ -88,7 +88,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/toggle_fixed_marker_button"
+        android:id="@+id/goto_location_button"
         android:layout_width="@dimen/fab_button_diameter"
         android:layout_height="@dimen/fab_button_diameter"
         android:layout_gravity="end|bottom"
